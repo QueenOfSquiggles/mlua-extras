@@ -3,9 +3,7 @@ use std::{
 };
 
 use super::{
-    function::{IntoTypedFunction, Return},
-    Param, Type, Typed, TypedClassBuilder, TypedModule, TypedModuleBuilder, TypedMultiValue,
-    TypedUserData,
+    function::{IntoTypedFunction, Return}, Param, Type, Typed, TypedModule, TypedModuleBuilder, TypedMultiValue
 };
 
 mod type_file;
@@ -156,7 +154,7 @@ impl DefinitionBuilder {
         self
     }
 
-    /// Register a class or enum type. Otherwise register the type as an alias.
+    /// Register a type
     pub fn register<T: Typed>(mut self, name: impl Into<Cow<'static, str>>) -> Self {
         let ty = T::ty();
         let ty = match &ty {
@@ -173,6 +171,12 @@ impl DefinitionBuilder {
 
     /// Register a already built type.
     pub fn register_as(mut self, name: impl Into<Cow<'static, str>>, ty: impl Into<Type>) -> Self {
+        let ty = ty.into();
+        let ty = match &ty {
+            Type::Class(_) | Type::Enum(_) => ty,
+            _ => Type::alias(ty)
+        };
+
         self.entries.push(Entry::new(
             name.into(),
             ty.into(),
@@ -184,6 +188,7 @@ impl DefinitionBuilder {
     ///
     /// The name of the class is the same as the name of the type passed
     pub fn module<T: TypedModule>(mut self, name: impl std::fmt::Display) -> Self {
+        let name = name.to_string();
         self.entries.push(Entry::new(
             name,
             // PERF: Ensure that the builder doesn't need it's error bubbled up another layer

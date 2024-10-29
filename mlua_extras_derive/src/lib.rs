@@ -2,7 +2,7 @@
 extern crate quote;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2};
+use proc_macro2::TokenStream as TokenStream2;
 use proc_macro_error::{proc_macro_error, abort};
 use syn::spanned::Spanned;
 use venial::{parse_item, Fields, Item};
@@ -44,10 +44,19 @@ pub fn derive_typed(input: TokenStream) -> TokenStream {
     match parse_item(input.clone()) {
         Ok(Item::Struct(struct_type)) => {
             let name = struct_type.name.clone();
+            let label = name.to_string();
             quote!(
                 impl mlua_extras::typed::Typed for #name {
                     fn ty() -> mlua_extras::typed::Type {
-                        mlua_extras::typed::Type::Class(Box::new(mlua_extras::typed::TypedClassBuilder::new::<#name>()))
+                        mlua_extras::typed::Type::class(mlua_extras::typed::TypedClassBuilder::new::<#name>())
+                    }
+
+                    fn as_param() -> mlua_extras::typed::Param {
+                        mlua_extras::typed::Param {
+                            doc: None,
+                            name: None,
+                            ty: mlua_extras::typed::Type::named(#label),
+                        }
                     }
                 }
             )

@@ -1,8 +1,8 @@
-use std::{borrow::Cow, cell::RefCell, collections::HashMap, path::Path, slice::Iter};
+use std::{cell::RefCell, collections::HashMap, path::Path, slice::Iter};
 
 use crate::typed::{function::Return, Param, Type, TypedModuleBuilder};
 
-use super::{Definition, Definitions, Entry};
+use super::{Definition, Definitions};
 
 /// Generates a lua definition file for each [`Definition`][`crate::typed::generator::Definition`]
 ///
@@ -90,7 +90,7 @@ pub struct DefinitionWriter<'def> {
 
 impl<'writer> DefinitionWriter<'writer> {
     /// Write the full definition group to a specified file
-    pub fn write_file<P: AsRef<Path>>(mut self, path: P) -> mlua::Result<()> {
+    pub fn write_file<P: AsRef<Path>>(self, path: P) -> mlua::Result<()> {
         let mut file = std::fs::OpenOptions::new()
             .create(true)
             .truncate(true)
@@ -100,7 +100,7 @@ impl<'writer> DefinitionWriter<'writer> {
     }
 
     /// Write the full definition group to the specified `io`
-    pub fn write<W: std::io::Write>(mut self, mut buffer: W) -> mlua::Result<()> {
+    pub fn write<W: std::io::Write>(self, mut buffer: W) -> mlua::Result<()> {
         writeln!(buffer, "--- @meta\n")?;
 
         for definition in self.definition.iter() {
@@ -295,8 +295,8 @@ impl<'writer> DefinitionWriter<'writer> {
                 },
                 other => {
                     return Err(mlua::Error::runtime(format!(
-                        "invalid root level type: {}",
-                        other.as_ref()
+                        "invalid root level type: {:?}",
+                        other
                     )))
                 }
             }

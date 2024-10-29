@@ -1,5 +1,16 @@
 # CHANGELOG
 
+##### 0.0.7
+
+**Features**
+
+- Typed derive macro for structs now generates a class type with the `ty()` method and the class name with `as_param()` method
+- Add typed impls for `Arc`, `Rc`, `Cell`, `RefCell`, `Mutex`, and `PhantomData`
+
+**Fixes**
+
+- `register_as` now converts all types except for classes and enums to alias types
+
 ##### 0.0.6
 
 **Features**

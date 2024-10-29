@@ -11,8 +11,7 @@ pub use class::{
 pub use module::{TypedModule, TypedModuleBuilder, TypedModuleFields, TypedModuleMethods};
 
 use std::{
-    borrow::Cow,
-    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    borrow::Cow, cell::{Cell, RefCell}, collections::{BTreeMap, BTreeSet, HashMap, HashSet}, marker::PhantomData, rc::Rc, sync::{Arc, Mutex}
 };
 
 use function::Return;
@@ -121,6 +120,42 @@ impl<T: Typed> Typed for Option<T> {
 impl<T: IntoLuaTypeLiteral> From<T> for Type {
     fn from(value: T) -> Self {
         Type::Single(value.into_lua_type_literal().into())
+    }
+}
+
+impl<T: Typed> Typed for Arc<T> {
+    fn ty() -> Type {
+        T::ty()
+    }
+}
+
+impl<T: Typed> Typed for Rc<T> {
+    fn ty() -> Type {
+        T::ty()
+    }
+}
+
+impl<T: Typed> Typed for Cell<T> {
+    fn ty() -> Type {
+        T::ty()
+    }
+}
+
+impl<T: Typed> Typed for RefCell<T> {
+    fn ty() -> Type {
+        T::ty()
+    }
+}
+
+impl<T: Typed> Typed for Mutex<T> {
+    fn ty() -> Type {
+        T::ty()
+    }
+}
+
+impl<T: Typed> Typed for PhantomData<T> {
+    fn ty() -> Type {
+        T::ty()
     }
 }
 
