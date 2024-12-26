@@ -41,6 +41,8 @@ pub trait TypedDataDocumentation<T: TypedUserData> {
 /// Typed variant of [`UserDataFields`]
 pub trait TypedDataMethods<'lua, T> {
     /// Exposes a method to lua
+    ///
+    /// Set `A` (Parameter type) to unit tuple `()` to omit any parameters
     fn add_method<S, A, R, M>(&mut self, name: &S, method: M)
     where
         S: ?Sized + AsRef<str>,
