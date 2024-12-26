@@ -135,6 +135,8 @@ pub trait TypedDataMethods<'lua, T> {
         G: Fn(&mut FunctionBuilder<A, R>);
 
     ///Exposes a function to lua (its a method that does not take Self)
+    ///
+    /// Set `A` (Parameter type) to unit tuple `()` to omit any parameters
     fn add_function<S, A, R, F>(&mut self, name: &S, function: F)
     where
         S: ?Sized + AsRef<str>,
