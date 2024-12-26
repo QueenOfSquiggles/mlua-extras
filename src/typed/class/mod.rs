@@ -4,11 +4,11 @@ use crate::MaybeSend;
 
 use super::{generator::FunctionBuilder, Typed, TypedMultiValue};
 
-mod standard;
 mod wrapped;
+mod standard;
 
-pub use standard::TypedClassBuilder;
 pub use wrapped::WrappedBuilder;
+pub use standard::TypedClassBuilder;
 
 /// Typed variant of [`UserData`]
 pub trait TypedUserData: Sized {
@@ -41,8 +41,6 @@ pub trait TypedDataDocumentation<T: TypedUserData> {
 /// Typed variant of [`UserDataFields`]
 pub trait TypedDataMethods<'lua, T> {
     /// Exposes a method to lua
-    ///
-    /// Set `A` (Parameter type) to unit tuple `()` to omit any parameters
     fn add_method<S, A, R, M>(&mut self, name: &S, method: M)
     where
         S: ?Sized + AsRef<str>,
@@ -98,12 +96,8 @@ pub trait TypedDataMethods<'lua, T> {
     ///
     /// Pass an additional callback that allows for param names, param doc comments, and return doc
     /// comments to be specified.
-    fn add_async_method_with<'s, S: ?Sized + AsRef<str>, A, R, M, MR, G>(
-        &mut self,
-        name: &S,
-        method: M,
-        generator: G,
-    ) where
+    fn add_async_method_with<'s, S: ?Sized + AsRef<str>, A, R, M, MR, G>(&mut self, name: &S, method: M, generator: G)
+    where
         'lua: 's,
         T: 'static,
         M: Fn(&'lua Lua, &'s T, A) -> MR + MaybeSend + 'static,
@@ -114,11 +108,8 @@ pub trait TypedDataMethods<'lua, T> {
 
     #[cfg(feature = "async")]
     ///exposes an async method to lua
-    fn add_async_method_mut<'s, S: ?Sized + AsRef<str>, A, R, M, MR>(
-        &mut self,
-        name: &S,
-        method: M,
-    ) where
+    fn add_async_method_mut<'s, S: ?Sized + AsRef<str>, A, R, M, MR>(&mut self, name: &S, method: M)
+    where
         'lua: 's,
         T: 'static,
         M: Fn(&'lua Lua, &'s mut T, A) -> MR + MaybeSend + 'static,
@@ -131,12 +122,8 @@ pub trait TypedDataMethods<'lua, T> {
     ///
     /// Pass an additional callback that allows for param names, param doc comments, and return doc
     /// comments to be specified.
-    fn add_async_method_mut_with<'s, S: ?Sized + AsRef<str>, A, R, M, MR, G>(
-        &mut self,
-        name: &S,
-        method: M,
-        generator: G,
-    ) where
+    fn add_async_method_mut_with<'s, S: ?Sized + AsRef<str>, A, R, M, MR, G>(&mut self, name: &S, method: M, generator: G)
+    where
         'lua: 's,
         T: 'static,
         M: Fn(&'lua Lua, &'s mut T, A) -> MR + MaybeSend + 'static,
@@ -146,8 +133,6 @@ pub trait TypedDataMethods<'lua, T> {
         G: Fn(&mut FunctionBuilder<A, R>);
 
     ///Exposes a function to lua (its a method that does not take Self)
-    ///
-    /// Set `A` (Parameter type) to unit tuple `()` to omit any parameters
     fn add_function<S, A, R, F>(&mut self, name: &S, function: F)
     where
         S: ?Sized + AsRef<str>,
@@ -202,12 +187,8 @@ pub trait TypedDataMethods<'lua, T> {
     ///
     /// Pass an additional callback that allows for param names, param doc comments, and return doc
     /// comments to be specified.
-    fn add_async_function_with<S: ?Sized, A, R, F, FR, G>(
-        &mut self,
-        name: &S,
-        function: F,
-        generator: G,
-    ) where
+    fn add_async_function_with<S: ?Sized, A, R, F, FR, G>(&mut self, name: &S, function: F, generator: G)
+    where
         S: AsRef<str>,
         A: FromLuaMulti<'lua> + TypedMultiValue,
         R: IntoLuaMulti<'lua> + TypedMultiValue,
@@ -277,12 +258,8 @@ pub trait TypedDataMethods<'lua, T> {
         F: 'static + MaybeSend + FnMut(&'lua Lua, A) -> mlua::Result<R>;
 
     ///Exposes a meta and mutable function to lua [http://lua-users.org/wiki/MetatableEvents](http://lua-users.org/wiki/MetatableEvents)
-    fn add_meta_function_mut_with<A, R, F, G>(
-        &mut self,
-        meta: MetaMethod,
-        function: F,
-        generator: G,
-    ) where
+    fn add_meta_function_mut_with<A, R, F, G>(&mut self, meta: MetaMethod, function: F, generator: G)
+    where
         A: FromLuaMulti<'lua> + TypedMultiValue,
         R: IntoLuaMulti<'lua> + TypedMultiValue,
         F: 'static + MaybeSend + FnMut(&'lua Lua, A) -> mlua::Result<R>,
