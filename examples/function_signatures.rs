@@ -27,10 +27,12 @@ impl TypedModule for MyModule {
                 })?;
         // add a method that takes no parameters
         // Note that the `_params` is a unit tuple `()`. This denotes having no parameters
-        methods.document("A function that takes no parameters").add_function("print_hello", |_ctx, _params: ()| {
-            println!("Hello world! (This was called with no function parameters)");
-            Ok(())
-        })?;
+        methods
+            .document("A function that takes no parameters")
+            .add_function("print_hello", |_ctx, _params: ()| {
+                println!("Hello world! (This was called with no function parameters)");
+                Ok(())
+            })?;
 
         Ok(())
     }
