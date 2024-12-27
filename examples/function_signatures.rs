@@ -40,12 +40,12 @@ fn main() -> mlua::Result<()> {
     let lua = mlua::Lua::new();
     lua.globals().set("my_module", MyModule::module())?;
     if let Err(err) = lua.load(r#"
-    -- in an IDE with LSP support, the function types would be shown along with the documentation
-    my_module.signature(0.0, false, 0, "", {0.0, 0.0, 0.0, 0.0})
-    my_module.signature(32.0, true, 45, "Hello, world!", {1.0, 3.0, -5.0, 0.0})
+        -- in an IDE with LSP support, the function types would be shown along with the documentation
+        my_module.signature(0.0, false, 0, "", {0.0, 0.0, 0.0, 0.0})
+        my_module.signature(32.0, true, 45, "Hello, world!", {1.0, 3.0, -5.0, 0.0})
     
-    my_module.print_hello()
-"#).eval::<mlua::Value>() {
+        my_module.print_hello()
+    "#).eval::<mlua::Value>() {
         eprintln!("{err}");
     }
     Ok(())
